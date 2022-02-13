@@ -5,7 +5,7 @@ where
     P: Parser<'a, A>,
 {
     move |input| match parser.parse(input) {
-        Ok((next_input, item)) => Ok((next_input, Some(item))),
+        Ok((next_input, result)) => Ok((next_input, Some(result))),
         Err(_) => Ok((input, None)),
     }
 }

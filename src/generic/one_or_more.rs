@@ -7,16 +7,16 @@ where
     move |mut input| {
         let mut result = Vec::new();
 
-        if let Ok((next_input, first_item)) = parser.parse(input) {
+        if let Ok((next_input, first_result)) = parser.parse(input) {
             input = next_input;
-            result.push(first_item);
+            result.push(first_result);
         } else {
             return Err(input);
         }
 
-        while let Ok((next_input, next_item)) = parser.parse(input) {
+        while let Ok((next_input, next_result)) = parser.parse(input) {
             input = next_input;
-            result.push(next_item);
+            result.push(next_result);
         }
 
         Ok((input, result))
