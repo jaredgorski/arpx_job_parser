@@ -14,5 +14,9 @@ mod prelude {
     pub use crate::generic::combinators::right::right;
 }
 
-pub use crate::arpx_job::{job, task, Job, Process, Task};
-pub use crate::generic::combinators::parser::{BoxedParser, ParseResult, Parser};
+pub use arpx_job::{job, task, Job, Process, Task};
+pub use generic::combinators::parser::{BoxedParser, ParseResult, Parser};
+
+pub fn parse_job<'a>(job: &str) {
+    job().parse(job)
+}
