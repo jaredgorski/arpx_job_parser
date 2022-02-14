@@ -6,7 +6,8 @@ pub struct Job {
     pub tasks: Vec<Task>,
 }
 
-#[must_use] pub fn job<'a>() -> impl Parser<'a, Job> {
+#[must_use]
+pub fn job<'a>() -> impl Parser<'a, Job> {
     one_or_more(whitespace_wrap(task())).map(|tasks| Job { tasks })
 }
 

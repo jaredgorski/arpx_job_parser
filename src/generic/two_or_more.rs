@@ -1,4 +1,4 @@
-use crate::generic::Parser;
+use crate::generic::parser::Parser;
 
 pub fn two_or_more<'a, P, A>(parser: P) -> impl Parser<'a, Vec<A>>
 where
@@ -33,7 +33,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::literal;
+    use crate::generic::literal::literal;
 
     #[test]
     fn test_two_or_more() -> Result<(), String> {

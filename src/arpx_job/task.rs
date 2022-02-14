@@ -6,7 +6,8 @@ pub struct Task {
     pub processes: Vec<Process>,
 }
 
-#[must_use] pub fn task<'a>() -> impl Parser<'a, Task> {
+#[must_use]
+pub fn task<'a>() -> impl Parser<'a, Task> {
     either(concurrent_processes(), single_process()).map(|processes| Task { processes })
 }
 

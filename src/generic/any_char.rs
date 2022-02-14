@@ -1,4 +1,4 @@
-use crate::generic::ParseResult;
+use crate::generic::parser::ParseResult;
 
 pub fn any_char(input: &str) -> ParseResult<char> {
     match input.chars().next() {

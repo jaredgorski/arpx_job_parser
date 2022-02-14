@@ -1,4 +1,8 @@
-use crate::generic::{any_char, left, right, zero_or_more, Parser};
+use crate::generic::any_char::any_char;
+use crate::generic::left::left;
+use crate::generic::parser::Parser;
+use crate::generic::right::right;
+use crate::generic::zero_or_more::zero_or_more;
 
 pub fn whitespace_wrap<'a, P, A>(parser: P) -> impl Parser<'a, A>
 where
@@ -19,7 +23,7 @@ pub fn whitespace_char<'a>() -> impl Parser<'a, char> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::literal;
+    use crate::generic::literal::literal;
 
     #[test]
     fn test_whitespace_wrap() -> Result<(), String> {

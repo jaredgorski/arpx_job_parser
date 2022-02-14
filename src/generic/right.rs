@@ -1,4 +1,5 @@
-use crate::generic::{pair, Parser};
+use crate::generic::pair::pair;
+use crate::generic::parser::Parser;
 
 pub fn right<'a, P1, P2, R1, R2>(parser1: P1, parser2: P2) -> impl Parser<'a, R2>
 where
@@ -13,7 +14,9 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::{any_char, literal, one_or_more};
+    use crate::generic::any_char::any_char;
+    use crate::generic::literal::literal;
+    use crate::generic::one_or_more::one_or_more;
 
     #[test]
     fn test_right() -> Result<(), String> {
