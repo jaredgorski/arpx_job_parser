@@ -15,3 +15,4 @@ mod prelude {
 }
 
 pub use crate::arpx_job::{job, task, Job, Process, Task};
+pub use crate::generic::combinators::parser::{BoxedParser, ParseResult, Parser};
