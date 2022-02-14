@@ -34,6 +34,15 @@ pub trait Parser<'a, Output> {
     }
 }
 
+impl<'a, F, Output> Parser<'a, Output> for F
+where
+    F: Fn(&'a str) -> ParseResult<Output>,
+{
+    fn parse(&self, input: &'a str) -> ParseResult<'a, Output> {
+        self(input)
+    }
+}
+
 pub struct BoxedParser<'a, Output> {
     parser: Box<dyn Parser<'a, Output> + 'a>,
 }
@@ -52,15 +61,6 @@ impl<'a, Output> BoxedParser<'a, Output> {
 impl<'a, Output> Parser<'a, Output> for BoxedParser<'a, Output> {
     fn parse(&self, input: &'a str) -> ParseResult<'a, Output> {
         self.parser.parse(input)
-    }
-}
-
-impl<'a, F, Output> Parser<'a, Output> for F
-where
-    F: Fn(&'a str) -> ParseResult<Output>,
-{
-    fn parse(&self, input: &'a str) -> ParseResult<'a, Output> {
-        self(input)
     }
 }
 
