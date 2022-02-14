@@ -19,13 +19,12 @@ mod tests {
     use super::*;
     use crate::generic::any_char::any_char;
     use crate::generic::literal::literal;
-    use crate::generic::one_or_more::one_or_more;
+    use crate::generic::n::n;
 
     #[test]
     fn test_pair() -> Result<(), String> {
         let alphanumeric = any_char.pred(|c| c.is_alphanumeric());
-        let any_word =
-            one_or_more(alphanumeric).map(|result| result.into_iter().collect::<String>());
+        let any_word = n(alphanumeric, 1..).map(|result| result.into_iter().collect::<String>());
 
         let parser = pair(literal("foo"), any_word);
 

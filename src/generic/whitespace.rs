@@ -1,8 +1,8 @@
 use crate::generic::any_char::any_char;
 use crate::generic::left::left;
+use crate::generic::n::n;
 use crate::generic::parser::Parser;
 use crate::generic::right::right;
-use crate::generic::zero_or_more::zero_or_more;
 
 pub fn whitespace_wrap<'a, P, A>(parser: P) -> impl Parser<'a, A>
 where
@@ -13,7 +13,7 @@ where
 }
 
 pub fn space0<'a>() -> impl Parser<'a, Vec<char>> {
-    zero_or_more(whitespace_char())
+    n(whitespace_char(), 0..)
 }
 
 pub fn whitespace_char<'a>() -> impl Parser<'a, char> {

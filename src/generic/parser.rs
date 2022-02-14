@@ -110,7 +110,7 @@ mod tests {
     use crate::generic::any_char::any_char;
     use crate::generic::left::left;
     use crate::generic::literal::literal;
-    use crate::generic::one_or_more::one_or_more;
+    use crate::generic::n::n;
 
     #[test]
     fn test_map() -> Result<(), String> {
@@ -127,8 +127,7 @@ mod tests {
     #[test]
     fn test_and_then() -> Result<(), String> {
         let alphanumeric = any_char.pred(|c| c.is_alphanumeric());
-        let any_word =
-            one_or_more(alphanumeric).map(|result| result.into_iter().collect::<String>());
+        let any_word = n(alphanumeric, 1..).map(|result| result.into_iter().collect::<String>());
         let exclamation = left(any_word, literal("!"));
 
         let parser = and_then(exclamation, |result| match result.as_str() {

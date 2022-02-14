@@ -8,7 +8,7 @@ pub struct Job {
 
 #[must_use]
 pub fn job<'a>() -> impl Parser<'a, Job> {
-    one_or_more(whitespace_wrap(task())).map(|tasks| Job { tasks })
+    n(whitespace_wrap(task()), 1..).map(|tasks| Job { tasks })
 }
 
 #[cfg(test)]

@@ -12,7 +12,7 @@ pub fn concurrent_processes<'a>() -> impl Parser<'a, Vec<Process>> {
     right(
         whitespace_wrap(literal("[")),
         left(
-            two_or_more(single_process()).map(|result| result.into_iter().flatten().collect()),
+            n(single_process(), 2..).map(|result| result.into_iter().flatten().collect()),
             whitespace_wrap(literal("]")),
         ),
     )
@@ -224,6 +224,31 @@ mod tests {
         ];
 
         assert_eq!(concurrent_processes().parse(example)?, ("", expected));
+        Ok(())
+    }
+
+    #[test]
+    fn test_concurrent_processes_must_have_2_single_processes() -> Result<(), String> {
+        let example_1 = "[loop1 ? loop2 : loop3;]";
+        let example_2 = "[loop1 ? loop2 : loop3; loop2 ? loop3;]";
+
+        let expected_2 = vec![
+            Process {
+                name: "loop1".to_string(),
+                onsucceed: "loop2".to_string(),
+                onfail: "loop3".to_string(),
+                silent: false,
+            },
+            Process {
+                name: "loop2".to_string(),
+                onsucceed: "loop3".to_string(),
+                onfail: String::new(),
+                silent: false,
+            },
+        ];
+
+        assert_eq!(concurrent_processes().parse(example_1), Err("]"));
+        assert_eq!(concurrent_processes().parse(example_2)?, ("", expected_2));
         Ok(())
     }
 }
