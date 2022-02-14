@@ -20,7 +20,7 @@ This library provides parser functions for processing arpx job scripts.
 </div>
 
 ```rust
-use arpx_job_parser::job;
+use arpx_job_parser::parse_job;
 
 let job = r#"
     [
@@ -32,55 +32,63 @@ let job = r#"
     (loop7 ? loop8;)
 "#;
 
-let parsed = job().parse(example);
+let parsed = parse_job(job);
 
 dbg!(parsed);
 
-// Ok((
-//     "",
-//     Job {
-//         tasks: vec![
-//             Task {
-//                 processes: vec![
-//                     Process {
-//                         name: "loop1".to_string(),
-//                         onsucceed: "loop2".to_string(),
-//                         onfail: "loop3".to_string(),
-//                         silent: true,
-//                     },
-//                     Process {
-//                         name: "loop2".to_string(),
-//                         onsucceed: "loop3".to_string(),
-//                         onfail: "loop4".to_string(),
-//                         silent: false,
-//                     },
-//                 ],
-//             },
-//             Task {
-//                 processes: vec![Process {
-//                     name: "loop3".to_string(),
-//                     onsucceed: "loop4".to_string(),
-//                     onfail: "loop5".to_string(),
-//                     silent: false,
-//                 }],
-//             },
-//             Task {
-//                 processes: vec![Process {
-//                     name: "loop6".to_string(),
-//                     onsucceed: String::new(),
-//                     onfail: String::new(),
-//                     silent: false,
-//                 }],
-//             },
-//             Task {
-//                 processes: vec![Process {
-//                     name: "loop7".to_string(),
-//                     onsucceed: "loop8".to_string(),
-//                     onfail: String::new(),
-//                     silent: true,
-//                 }],
-//             },
-//         ],
-//     },
-// ))
+// [src/main.rs:15] parsed = Ok(
+//     (
+//         "",
+//         Job {
+//             tasks: [
+//                 Task {
+//                     processes: [
+//                         Process {
+//                             name: "loop1",
+//                             onfail: "loop3",
+//                             onsucceed: "loop2",
+//                             silent: true,
+//                         },
+//                         Process {
+//                             name: "loop2",
+//                             onfail: "loop4",
+//                             onsucceed: "loop3",
+//                             silent: false,
+//                         },
+//                     ],
+//                 },
+//                 Task {
+//                     processes: [
+//                         Process {
+//                             name: "loop3",
+//                             onfail: "loop5",
+//                             onsucceed: "loop4",
+//                             silent: false,
+//                         },
+//                     ],
+//                 },
+//                 Task {
+//                     processes: [
+//                         Process {
+//                             name: "loop6",
+//                             onfail: "",
+//                             onsucceed: "",
+//                             silent: false,
+//                         },
+//                     ],
+//                 },
+//                 Task {
+//                     processes: [
+//                         Process {
+//                             name: "loop7",
+//                             onfail: "",
+//                             onsucceed: "loop8",
+//                             silent: true,
+//                         },
+//                     ],
+//                 },
+//             ],
+//         },
+//     ),
+// )
 ```
