@@ -1,6 +1,17 @@
 [package]
 name = "arpx_job_parser"
+description = "Parse arpx job scripts for runtime"
+categories = ["parser-implementations"]
 version = "0.1.0"
+license-file = "LICENSE.txt"
+readme = "README.md"
+authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
+repository = "https://github.com/jaredgorski/arpx_job_parser"
 edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+test = true
+crate-type = ["lib"]
 
 [dependencies]
