@@ -18,6 +18,8 @@ where
             Excluded(value) => value + 1,
         };
         let end = match range.end_bound() {
+            // End bound must exist because this is a Range, not a RangeFrom.
+            // If a larger range is needed, pass explicitly in range argument.
             Unbounded => 999999,
             Included(value) => value + 1,
             Excluded(value) => *value,
