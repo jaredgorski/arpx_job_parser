@@ -17,6 +17,6 @@ mod prelude {
 pub use arpx_job::{job, task, Job, Process, Task};
 pub use generic::combinators::parser::{BoxedParser, ParseResult, Parser};
 
-pub fn parse_job<'a>(job: &str) {
-    job().parse(job)
+pub fn parse_job<'a>(job: &str) -> ParseResult<Job> {
+    arpx_job::job().parse(job)
 }
