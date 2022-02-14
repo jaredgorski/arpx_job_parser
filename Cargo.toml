@@ -2,7 +2,7 @@
 name = "arpx_job_parser"
 description = "Parse arpx job scripts for runtime"
 categories = ["parser-implementations"]
-version = "0.1.1"
+version = "0.1.2"
 license-file = "LICENSE"
 readme = "README.md"
 authors = ["Jared Gorski <jaredgorski6@gmail.com>"]
