@@ -22,21 +22,23 @@ This library provides parser functions for processing arpx job scripts.
 ```rust
 use arpx_job_parser::parse_job;
 
-let job = r#"
-    [
-        (loop1 ? loop2 : loop3;)
-        loop2 ? loop3 : loop4;
-    ]
-    loop3 ? loop4 : loop5;
-    loop6;
-    (loop7 ? loop8;)
-"#;
+fn main() {
+    let job = r#"
+        [
+            (loop1 ? loop2 : loop3;)
+            loop2 ? loop3 : loop4;
+        ]
+        loop3 ? loop4 : loop5;
+        loop6;
+        (loop7 ? loop8;)
+    "#;
 
-let parsed = parse_job(job);
+    let parsed = parse_job(job);
 
-dbg!(parsed);
+    dbg!(parsed);
+}
 
-// [src/main.rs:15] parsed = Ok(
+// [src/main.rs:16] parsed = Ok(
 //     (
 //         "",
 //         Job {
