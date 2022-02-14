@@ -4,9 +4,9 @@ use std::ops::RangeBounds;
 
 use crate::generic::parser::Parser;
 
-pub fn n<'a, P, I, A>(parser: P, range: I) -> impl Parser<'a, Vec<A>>
+pub fn n<'a, P, R, A>(parser: P, range: R) -> impl Parser<'a, Vec<A>>
 where
-    I: Iterator<Item = usize> + RangeBounds<usize> + Clone,
+    R: Iterator<Item = usize> + RangeBounds<usize>,
     P: Parser<'a, A>,
 {
     move |mut input| {
