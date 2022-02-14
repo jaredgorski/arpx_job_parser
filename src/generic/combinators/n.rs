@@ -2,7 +2,7 @@ use std::iter::Iterator;
 use std::ops::Bound::{Excluded, Included, Unbounded};
 use std::ops::RangeBounds;
 
-use crate::generic::parser::Parser;
+use crate::generic::combinators::parser::Parser;
 
 pub fn n<'a, P, R, A>(parser: P, range: R) -> impl Parser<'a, Vec<A>>
 where
@@ -43,7 +43,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::literal::literal;
+    use crate::generic::builtin_matchers::literal::literal;
 
     #[test]
     fn test_n_or_more() -> Result<(), String> {

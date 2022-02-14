@@ -107,10 +107,10 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::any_char::any_char;
-    use crate::generic::left::left;
-    use crate::generic::literal::literal;
-    use crate::generic::n::n;
+    use crate::generic::builtin_matchers::any_char::any_char;
+    use crate::generic::builtin_matchers::literal::literal;
+    use crate::generic::combinators::left::left;
+    use crate::generic::combinators::n::n;
 
     #[test]
     fn test_map() -> Result<(), String> {

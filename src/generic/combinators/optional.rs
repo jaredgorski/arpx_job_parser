@@ -1,4 +1,4 @@
-use crate::generic::parser::Parser;
+use crate::generic::combinators::parser::Parser;
 
 pub fn optional<'a, P, A>(parser: P) -> impl Parser<'a, Option<A>>
 where
@@ -13,7 +13,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::literal::literal;
+    use crate::generic::builtin_matchers::literal::literal;
 
     #[test]
     fn test_optional() -> Result<(), String> {

@@ -1,8 +1,8 @@
-use crate::generic::any_char::any_char;
-use crate::generic::left::left;
-use crate::generic::n::n;
-use crate::generic::parser::Parser;
-use crate::generic::right::right;
+use crate::generic::builtin_matchers::any_char::any_char;
+use crate::generic::combinators::left::left;
+use crate::generic::combinators::n::n;
+use crate::generic::combinators::parser::Parser;
+use crate::generic::combinators::right::right;
 
 pub fn whitespace_wrap<'a, P, A>(parser: P) -> impl Parser<'a, A>
 where
@@ -23,7 +23,7 @@ pub fn whitespace_char<'a>() -> impl Parser<'a, char> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::literal::literal;
+    use crate::generic::builtin_matchers::literal::literal;
 
     #[test]
     fn test_whitespace_wrap() -> Result<(), String> {

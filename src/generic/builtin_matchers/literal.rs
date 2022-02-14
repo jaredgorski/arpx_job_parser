@@ -1,4 +1,4 @@
-use crate::generic::parser::Parser;
+use crate::generic::combinators::parser::Parser;
 
 pub fn literal<'a>(expected: &'static str) -> impl Parser<'a, ()> {
     move |input: &'a str| match input.get(0..expected.len()) {

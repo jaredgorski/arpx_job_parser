@@ -1,4 +1,4 @@
-use crate::generic::parser::Parser;
+use crate::generic::combinators::parser::Parser;
 
 pub fn either<'a, P1, P2, A>(parser1: P1, parser2: P2) -> impl Parser<'a, A>
 where
@@ -14,7 +14,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::literal::literal;
+    use crate::generic::builtin_matchers::literal::literal;
 
     #[test]
     fn test_either() -> Result<(), String> {

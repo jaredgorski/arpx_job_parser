@@ -1,4 +1,4 @@
-use crate::generic::parser::Parser;
+use crate::generic::combinators::parser::Parser;
 
 pub fn pair<'a, P1, P2, R1, R2>(parser1: P1, parser2: P2) -> impl Parser<'a, (R1, R2)>
 where
@@ -17,9 +17,9 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generic::any_char::any_char;
-    use crate::generic::literal::literal;
-    use crate::generic::n::n;
+    use crate::generic::builtin_matchers::any_char::any_char;
+    use crate::generic::builtin_matchers::literal::literal;
+    use crate::generic::combinators::n::n;
 
     #[test]
     fn test_pair() -> Result<(), String> {
