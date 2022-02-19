@@ -25,8 +25,8 @@ mod tests {
         let expected = Task {
             processes: vec![Process {
                 name: "loop1".to_string(),
-                onsucceed: "loop2".to_string(),
-                onfail: "loop3".to_string(),
+                onsucceed: Some("loop2".to_string()),
+                onfail: Some("loop3".to_string()),
                 silent: false,
             }],
         };
@@ -48,14 +48,14 @@ mod tests {
             processes: vec![
                 Process {
                     name: "loop1".to_string(),
-                    onsucceed: "loop2".to_string(),
-                    onfail: "loop3".to_string(),
+                    onsucceed: Some("loop2".to_string()),
+                    onfail: Some("loop3".to_string()),
                     silent: false,
                 },
                 Process {
                     name: "loop2".to_string(),
-                    onsucceed: "loop3".to_string(),
-                    onfail: "loop4".to_string(),
+                    onsucceed: Some("loop3".to_string()),
+                    onfail: Some("loop4".to_string()),
                     silent: false,
                 },
             ],
