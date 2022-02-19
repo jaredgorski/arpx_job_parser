@@ -1,18 +1,9 @@
 use crate::arpx_job::process::{concurrent_processes, single_process, Process};
 use crate::prelude::*;
-use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Task {
     pub processes: Vec<Process>,
-}
-
-impl Deref for Task {
-    type Target = Vec<Process>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.processes
-    }
 }
 
 #[must_use]
