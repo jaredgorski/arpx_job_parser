@@ -3,8 +3,8 @@ use crate::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Process {
     pub name: String,
-    pub onfail: Option<String>,
-    pub onsucceed: Option<String>,
+    pub onfail: Option<Box<Process>>,
+    pub onsucceed: Option<Box<Process>>,
     pub silent: bool,
 }
 
@@ -76,16 +76,30 @@ fn process_name(input: &str) -> ParseResult<String> {
     Ok((&input[next_index..], matched))
 }
 
-fn process_predicate<'a>() -> impl Parser<'a, (Option<String>, Option<String>)> {
+fn process_predicate<'a>() -> impl Parser<'a, (Option<Box<Process>>, Option<Box<Process>>)> {
     pair(optional(onsucceed()), optional(onfail()))
 }
 
-fn onsucceed<'a>() -> impl Parser<'a, String> {
-    right(whitespace_wrap(literal("?")), process_name)
+fn onsucceed<'a>() -> impl Parser<'a, Box<Process>> {
+    right(whitespace_wrap(literal("?")), process_name).map(|name| {
+        Box::new(Process {
+            name,
+            onsucceed: None,
+            onfail: None,
+            silent: false,
+        })
+    })
 }
 
-fn onfail<'a>() -> impl Parser<'a, String> {
-    right(whitespace_wrap(literal(":")), process_name)
+fn onfail<'a>() -> impl Parser<'a, Box<Process>> {
+    right(whitespace_wrap(literal(":")), process_name).map(|name| {
+        Box::new(Process {
+            name,
+            onsucceed: None,
+            onfail: None,
+            silent: false,
+        })
+    })
 }
 
 #[cfg(test)]
@@ -129,7 +143,12 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: Some("loop2".to_string()),
+            onsucceed: Some(Box::new(Process {
+                name: "loop2".to_string(),
+                onsucceed: None,
+                onfail: None,
+                silent: false,
+            })),
             onfail: None,
             silent: false,
         }];
@@ -145,7 +164,12 @@ mod tests {
         let expected = vec![Process {
             name: "loop1".to_string(),
             onsucceed: None,
-            onfail: Some("loop3".to_string()),
+            onfail: Some(Box::new(Process {
+                name: "loop3".to_string(),
+                onsucceed: None,
+                onfail: None,
+                silent: false,
+            })),
             silent: false,
         }];
 
@@ -159,8 +183,18 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: Some("loop2".to_string()),
-            onfail: Some("loop3".to_string()),
+            onsucceed: Some(Box::new(Process {
+                name: "loop2".to_string(),
+                onsucceed: None,
+                onfail: None,
+                silent: false,
+            })),
+            onfail: Some(Box::new(Process {
+                name: "loop3".to_string(),
+                onsucceed: None,
+                onfail: None,
+                silent: false,
+            })),
             silent: false,
         }];
 
@@ -174,8 +208,18 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: Some("loop2".to_string()),
-            onfail: Some("loop3".to_string()),
+            onsucceed: Some(Box::new(Process {
+                name: "loop2".to_string(),
+                onsucceed: None,
+                onfail: None,
+                silent: false,
+            })),
+            onfail: Some(Box::new(Process {
+                name: "loop3".to_string(),
+                onsucceed: None,
+                onfail: None,
+                silent: false,
+            })),
             silent: true,
         }];
 
@@ -196,20 +240,50 @@ mod tests {
         let expected = vec![
             Process {
                 name: "loop1".to_string(),
-                onsucceed: Some("loop2".to_string()),
-                onfail: Some("loop3".to_string()),
+                onsucceed: Some(Box::new(Process {
+                    name: "loop2".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
+                onfail: Some(Box::new(Process {
+                    name: "loop3".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
                 silent: false,
             },
             Process {
                 name: "loop2".to_string(),
-                onsucceed: Some("loop3".to_string()),
-                onfail: Some("loop4".to_string()),
+                onsucceed: Some(Box::new(Process {
+                    name: "loop3".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
+                onfail: Some(Box::new(Process {
+                    name: "loop4".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
                 silent: false,
             },
             Process {
                 name: "loop3".to_string(),
-                onsucceed: Some("loop4".to_string()),
-                onfail: Some("loop5".to_string()),
+                onsucceed: Some(Box::new(Process {
+                    name: "loop4".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
+                onfail: Some(Box::new(Process {
+                    name: "loop5".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
                 silent: true,
             },
         ];
@@ -226,13 +300,28 @@ mod tests {
         let expected_2 = vec![
             Process {
                 name: "loop1".to_string(),
-                onsucceed: Some("loop2".to_string()),
-                onfail: Some("loop3".to_string()),
+                onsucceed: Some(Box::new(Process {
+                    name: "loop2".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
+                onfail: Some(Box::new(Process {
+                    name: "loop3".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
                 silent: false,
             },
             Process {
                 name: "loop2".to_string(),
-                onsucceed: Some("loop3".to_string()),
+                onsucceed: Some(Box::new(Process {
+                    name: "loop3".to_string(),
+                    onsucceed: None,
+                    onfail: None,
+                    silent: false,
+                })),
                 onfail: None,
                 silent: false,
             },
