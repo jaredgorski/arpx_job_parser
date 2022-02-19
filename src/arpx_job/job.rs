@@ -1,9 +1,18 @@
 use crate::arpx_job::task::{task, Task};
 use crate::prelude::*;
+use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Job {
     pub tasks: Vec<Task>,
+}
+
+impl Deref for Job {
+    type Target = Vec<Task>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.tasks
+    }
 }
 
 #[must_use]
