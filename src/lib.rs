@@ -1,4 +1,5 @@
 pub mod arpx_job;
+mod error;
 mod generic;
 
 mod prelude {
@@ -17,16 +18,26 @@ mod prelude {
 pub use arpx_job::{Job, Process, Task};
 pub use generic::combinators::parser::{ParseResult, Parser};
 
-pub fn parse_job(job: &str) -> ParseResult<arpx_job::Job> {
-    arpx_job::job().parse(job)
+use error::{get_parse_error_context, ParseErrorContext};
+
+pub fn parse_job(job: &str) -> Result<arpx_job::Job, ParseErrorContext> {
+    match arpx_job::job().parse(job) {
+        Ok(("", parsed_job)) => Ok(parsed_job),
+        Ok((remaining, _)) => {
+            let error_context = get_parse_error_context(job, remaining);
+
+            Err(error_context)
+        }
+        Err(error) => panic!("{:?}", error),
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_job, Job, Process, Task};
+    use super::{parse_job, Job, ParseErrorContext, Process, Task};
 
     #[test]
-    fn test_parse_job() -> Result<(), String> {
+    fn test_parse_job() -> Result<(), ParseErrorContext> {
         let example = r#"
             [
                 (loop1 ? loop2 : loop3;)
@@ -37,88 +48,85 @@ mod tests {
             (loop7 ? loop8;)
         "#;
 
-        let expected = (
-            "",
-            Job {
-                tasks: vec![
-                    Task {
-                        processes: vec![
-                            Process {
-                                name: "loop1".to_string(),
-                                onsucceed: Some(Box::new(Process {
-                                    name: "loop2".to_string(),
-                                    onsucceed: None,
-                                    onfail: None,
-                                    silent: false,
-                                })),
-                                onfail: Some(Box::new(Process {
-                                    name: "loop3".to_string(),
-                                    onsucceed: None,
-                                    onfail: None,
-                                    silent: false,
-                                })),
-                                silent: true,
-                            },
-                            Process {
-                                name: "loop2".to_string(),
-                                onsucceed: Some(Box::new(Process {
-                                    name: "loop3".to_string(),
-                                    onsucceed: None,
-                                    onfail: None,
-                                    silent: false,
-                                })),
-                                onfail: Some(Box::new(Process {
-                                    name: "loop4".to_string(),
-                                    onsucceed: None,
-                                    onfail: None,
-                                    silent: false,
-                                })),
-                                silent: false,
-                            },
-                        ],
-                    },
-                    Task {
-                        processes: vec![Process {
-                            name: "loop3".to_string(),
+        let expected = Job {
+            tasks: vec![
+                Task {
+                    processes: vec![
+                        Process {
+                            name: "loop1".to_string(),
                             onsucceed: Some(Box::new(Process {
-                                name: "loop4".to_string(),
+                                name: "loop2".to_string(),
                                 onsucceed: None,
                                 onfail: None,
                                 silent: false,
                             })),
                             onfail: Some(Box::new(Process {
-                                name: "loop5".to_string(),
+                                name: "loop3".to_string(),
+                                onsucceed: None,
+                                onfail: None,
+                                silent: false,
+                            })),
+                            silent: true,
+                        },
+                        Process {
+                            name: "loop2".to_string(),
+                            onsucceed: Some(Box::new(Process {
+                                name: "loop3".to_string(),
+                                onsucceed: None,
+                                onfail: None,
+                                silent: false,
+                            })),
+                            onfail: Some(Box::new(Process {
+                                name: "loop4".to_string(),
                                 onsucceed: None,
                                 onfail: None,
                                 silent: false,
                             })),
                             silent: false,
-                        }],
-                    },
-                    Task {
-                        processes: vec![Process {
-                            name: "loop6".to_string(),
+                        },
+                    ],
+                },
+                Task {
+                    processes: vec![Process {
+                        name: "loop3".to_string(),
+                        onsucceed: Some(Box::new(Process {
+                            name: "loop4".to_string(),
                             onsucceed: None,
                             onfail: None,
                             silent: false,
-                        }],
-                    },
-                    Task {
-                        processes: vec![Process {
-                            name: "loop7".to_string(),
-                            onsucceed: Some(Box::new(Process {
-                                name: "loop8".to_string(),
-                                onsucceed: None,
-                                onfail: None,
-                                silent: false,
-                            })),
+                        })),
+                        onfail: Some(Box::new(Process {
+                            name: "loop5".to_string(),
+                            onsucceed: None,
                             onfail: None,
-                            silent: true,
-                        }],
-                    },
-                ],
-            },
-        );
+                            silent: false,
+                        })),
+                        silent: false,
+                    }],
+                },
+                Task {
+                    processes: vec![Process {
+                        name: "loop6".to_string(),
+                        onsucceed: None,
+                        onfail: None,
+                        silent: false,
+                    }],
+                },
+                Task {
+                    processes: vec![Process {
+                        name: "loop7".to_string(),
+                        onsucceed: Some(Box::new(Process {
+                            name: "loop8".to_string(),
+                            onsucceed: None,
+                            onfail: None,
+                            silent: false,
+                        })),
+                        onfail: None,
+                        silent: true,
+                    }],
+                },
+            ],
+        };
 
         assert_eq!(parse_job(example)?, expected);
         Ok(())
