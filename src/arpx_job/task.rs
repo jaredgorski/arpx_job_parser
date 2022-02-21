@@ -25,18 +25,8 @@ mod tests {
         let expected = Task {
             processes: vec![Process {
                 name: "loop1".to_string(),
-                onsucceed: Some(Box::new(Process {
-                    name: "loop2".to_string(),
-                    onsucceed: None,
-                    onfail: None,
-                    silent: false,
-                })),
-                onfail: Some(Box::new(Process {
-                    name: "loop3".to_string(),
-                    onsucceed: None,
-                    onfail: None,
-                    silent: false,
-                })),
+                onsucceed: Some("loop2".to_string()),
+                onfail: Some("loop3".to_string()),
                 silent: false,
             }],
         };
@@ -58,34 +48,14 @@ mod tests {
             processes: vec![
                 Process {
                     name: "loop1".to_string(),
-                    onsucceed: Some(Box::new(Process {
-                        name: "loop2".to_string(),
-                        onsucceed: None,
-                        onfail: None,
-                        silent: false,
-                    })),
-                    onfail: Some(Box::new(Process {
-                        name: "loop3".to_string(),
-                        onsucceed: None,
-                        onfail: None,
-                        silent: false,
-                    })),
+                    onsucceed: Some("loop2".to_string()),
+                    onfail: Some("loop3".to_string()),
                     silent: false,
                 },
                 Process {
                     name: "loop2".to_string(),
-                    onsucceed: Some(Box::new(Process {
-                        name: "loop3".to_string(),
-                        onsucceed: None,
-                        onfail: None,
-                        silent: false,
-                    })),
-                    onfail: Some(Box::new(Process {
-                        name: "loop4".to_string(),
-                        onsucceed: None,
-                        onfail: None,
-                        silent: false,
-                    })),
+                    onsucceed: Some("loop3".to_string()),
+                    onfail: Some("loop4".to_string()),
                     silent: false,
                 },
             ],
