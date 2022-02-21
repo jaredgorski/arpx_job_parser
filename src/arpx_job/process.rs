@@ -3,8 +3,8 @@ use crate::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Process {
     pub name: String,
-    pub onfail: String,
-    pub onsucceed: String,
+    pub onfail: Option<String>,
+    pub onsucceed: Option<String>,
     pub silent: bool,
 }
 
@@ -76,17 +76,8 @@ fn process_name(input: &str) -> ParseResult<String> {
     Ok((&input[next_index..], matched))
 }
 
-fn process_predicate<'a>() -> impl Parser<'a, (String, String)> {
-    pair(
-        optional(onsucceed()).map(|result| match result {
-            Some(input) => input,
-            None => String::new(),
-        }),
-        optional(onfail()).map(|result| match result {
-            Some(input) => input,
-            None => String::new(),
-        }),
-    )
+fn process_predicate<'a>() -> impl Parser<'a, (Option<String>, Option<String>)> {
+    pair(optional(onsucceed()), optional(onfail()))
 }
 
 fn onsucceed<'a>() -> impl Parser<'a, String> {
@@ -108,8 +99,8 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: String::new(),
-            onfail: String::new(),
+            onsucceed: None,
+            onfail: None,
             silent: false,
         }];
 
@@ -123,8 +114,8 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: String::new(),
-            onfail: String::new(),
+            onsucceed: None,
+            onfail: None,
             silent: true,
         }];
 
@@ -138,8 +129,8 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: "loop2".to_string(),
-            onfail: String::new(),
+            onsucceed: Some("loop2".to_string()),
+            onfail: None,
             silent: false,
         }];
 
@@ -153,8 +144,8 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: String::new(),
-            onfail: "loop3".to_string(),
+            onsucceed: None,
+            onfail: Some("loop3".to_string()),
             silent: false,
         }];
 
@@ -168,8 +159,8 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: "loop2".to_string(),
-            onfail: "loop3".to_string(),
+            onsucceed: Some("loop2".to_string()),
+            onfail: Some("loop3".to_string()),
             silent: false,
         }];
 
@@ -183,8 +174,8 @@ mod tests {
 
         let expected = vec![Process {
             name: "loop1".to_string(),
-            onsucceed: "loop2".to_string(),
-            onfail: "loop3".to_string(),
+            onsucceed: Some("loop2".to_string()),
+            onfail: Some("loop3".to_string()),
             silent: true,
         }];
 
@@ -205,20 +196,20 @@ mod tests {
         let expected = vec![
             Process {
                 name: "loop1".to_string(),
-                onsucceed: "loop2".to_string(),
-                onfail: "loop3".to_string(),
+                onsucceed: Some("loop2".to_string()),
+                onfail: Some("loop3".to_string()),
                 silent: false,
             },
             Process {
                 name: "loop2".to_string(),
-                onsucceed: "loop3".to_string(),
-                onfail: "loop4".to_string(),
+                onsucceed: Some("loop3".to_string()),
+                onfail: Some("loop4".to_string()),
                 silent: false,
             },
             Process {
                 name: "loop3".to_string(),
-                onsucceed: "loop4".to_string(),
-                onfail: "loop5".to_string(),
+                onsucceed: Some("loop4".to_string()),
+                onfail: Some("loop5".to_string()),
                 silent: true,
             },
         ];
@@ -235,14 +226,14 @@ mod tests {
         let expected_2 = vec![
             Process {
                 name: "loop1".to_string(),
-                onsucceed: "loop2".to_string(),
-                onfail: "loop3".to_string(),
+                onsucceed: Some("loop2".to_string()),
+                onfail: Some("loop3".to_string()),
                 silent: false,
             },
             Process {
                 name: "loop2".to_string(),
-                onsucceed: "loop3".to_string(),
-                onfail: String::new(),
+                onsucceed: Some("loop3".to_string()),
+                onfail: None,
                 silent: false,
             },
         ];

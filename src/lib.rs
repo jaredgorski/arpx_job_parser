@@ -54,14 +54,14 @@ mod tests {
                     processes: vec![
                         Process {
                             name: "loop1".to_string(),
-                            onsucceed: "loop2".to_string(),
-                            onfail: "loop3".to_string(),
+                            onsucceed: Some("loop2".to_string()),
+                            onfail: Some("loop3".to_string()),
                             silent: true,
                         },
                         Process {
                             name: "loop2".to_string(),
-                            onsucceed: "loop3".to_string(),
-                            onfail: "loop4".to_string(),
+                            onsucceed: Some("loop3".to_string()),
+                            onfail: Some("loop4".to_string()),
                             silent: false,
                         },
                     ],
@@ -69,24 +69,24 @@ mod tests {
                 Task {
                     processes: vec![Process {
                         name: "loop3".to_string(),
-                        onsucceed: "loop4".to_string(),
-                        onfail: "loop5".to_string(),
+                        onsucceed: Some("loop4".to_string()),
+                        onfail: Some("loop5".to_string()),
                         silent: false,
                     }],
                 },
                 Task {
                     processes: vec![Process {
                         name: "loop6".to_string(),
-                        onsucceed: "".to_string(),
-                        onfail: "".to_string(),
+                        onsucceed: None,
+                        onfail: None,
                         silent: false,
                     }],
                 },
                 Task {
                     processes: vec![Process {
                         name: "loop7".to_string(),
-                        onsucceed: "loop8".to_string(),
-                        onfail: "".to_string(),
+                        onsucceed: Some("loop8".to_string()),
+                        onfail: None,
                         silent: true,
                     }],
                 },
