@@ -24,6 +24,7 @@ mod tests {
 
         let expected = Task {
             processes: vec![Process {
+                log_monitors: Vec::new(),
                 name: "loop1".to_string(),
                 onsucceed: Some("loop2".to_string()),
                 onfail: Some("loop3".to_string()),
@@ -47,12 +48,14 @@ mod tests {
         let expected = Task {
             processes: vec![
                 Process {
+                    log_monitors: Vec::new(),
                     name: "loop1".to_string(),
                     onsucceed: Some("loop2".to_string()),
                     onfail: Some("loop3".to_string()),
                     silent: false,
                 },
                 Process {
+                    log_monitors: Vec::new(),
                     name: "loop2".to_string(),
                     onsucceed: Some("loop3".to_string()),
                     onfail: Some("loop4".to_string()),

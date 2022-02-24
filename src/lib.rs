@@ -40,12 +40,12 @@ mod tests {
     fn test_parse_job() -> Result<(), ParseErrorContext> {
         let example = r#"
             [
-                (loop1 ? loop2 : loop3;)
+                (loop1 ? loop2 : loop3;) @monitor_1 @monitor_2
                 loop2 ? loop3 : loop4;
             ]
-            loop3 ? loop4 : loop5;
+            loop3 ? loop4 : loop5; @monitor_3
             loop6;
-            (loop7 ? loop8;)
+            (loop7 ? loop8;) @monitor_4
         "#;
 
         let expected = Job {
@@ -53,12 +53,14 @@ mod tests {
                 Task {
                     processes: vec![
                         Process {
+                            log_monitors: vec!["monitor_1".to_string(), "monitor_2".to_string()],
                             name: "loop1".to_string(),
                             onsucceed: Some("loop2".to_string()),
                             onfail: Some("loop3".to_string()),
                             silent: true,
                         },
                         Process {
+                            log_monitors: Vec::new(),
                             name: "loop2".to_string(),
                             onsucceed: Some("loop3".to_string()),
                             onfail: Some("loop4".to_string()),
@@ -68,6 +70,7 @@ mod tests {
                 },
                 Task {
                     processes: vec![Process {
+                        log_monitors: vec!["monitor_3".to_string()],
                         name: "loop3".to_string(),
                         onsucceed: Some("loop4".to_string()),
                         onfail: Some("loop5".to_string()),
@@ -76,6 +79,7 @@ mod tests {
                 },
                 Task {
                     processes: vec![Process {
+                        log_monitors: Vec::new(),
                         name: "loop6".to_string(),
                         onsucceed: None,
                         onfail: None,
@@ -84,6 +88,7 @@ mod tests {
                 },
                 Task {
                     processes: vec![Process {
+                        log_monitors: vec!["monitor_4".to_string()],
                         name: "loop7".to_string(),
                         onsucceed: Some("loop8".to_string()),
                         onfail: None,

@@ -35,12 +35,14 @@ mod tests {
                     Task {
                         processes: vec![
                             Process {
+                                log_monitors: Vec::new(),
                                 name: "loop1".to_string(),
                                 onsucceed: Some("loop2".to_string()),
                                 onfail: Some("loop3".to_string()),
                                 silent: true,
                             },
                             Process {
+                                log_monitors: Vec::new(),
                                 name: "loop2".to_string(),
                                 onsucceed: Some("loop3".to_string()),
                                 onfail: Some("loop4".to_string()),
@@ -50,6 +52,7 @@ mod tests {
                     },
                     Task {
                         processes: vec![Process {
+                            log_monitors: Vec::new(),
                             name: "loop3".to_string(),
                             onsucceed: Some("loop4".to_string()),
                             onfail: Some("loop5".to_string()),
@@ -58,6 +61,7 @@ mod tests {
                     },
                     Task {
                         processes: vec![Process {
+                            log_monitors: Vec::new(),
                             name: "loop6".to_string(),
                             onsucceed: None,
                             onfail: None,
@@ -66,6 +70,7 @@ mod tests {
                     },
                     Task {
                         processes: vec![Process {
+                            log_monitors: Vec::new(),
                             name: "loop7".to_string(),
                             onsucceed: Some("loop8".to_string()),
                             onfail: None,
