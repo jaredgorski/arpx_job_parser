@@ -20,12 +20,12 @@ mod tests {
     fn test_job() -> Result<(), String> {
         let example = r#"
             [
-                (loop1 ? loop2 : loop3;)
+                loop1 ? loop2 : loop3;
                 loop2 ? loop3 : loop4;
             ]
             loop3 ? loop4 : loop5;
             loop6;
-            (loop7 ? loop8;)
+            loop7 ? loop8;
         "#;
 
         let expected = (
@@ -39,14 +39,12 @@ mod tests {
                                 name: "loop1".to_string(),
                                 onsucceed: Some("loop2".to_string()),
                                 onfail: Some("loop3".to_string()),
-                                silent: true,
                             },
                             Process {
                                 log_monitors: Vec::new(),
                                 name: "loop2".to_string(),
                                 onsucceed: Some("loop3".to_string()),
                                 onfail: Some("loop4".to_string()),
-                                silent: false,
                             },
                         ],
                     },
@@ -56,7 +54,6 @@ mod tests {
                             name: "loop3".to_string(),
                             onsucceed: Some("loop4".to_string()),
                             onfail: Some("loop5".to_string()),
-                            silent: false,
                         }],
                     },
                     Task {
@@ -65,7 +62,6 @@ mod tests {
                             name: "loop6".to_string(),
                             onsucceed: None,
                             onfail: None,
-                            silent: false,
                         }],
                     },
                     Task {
@@ -74,7 +70,6 @@ mod tests {
                             name: "loop7".to_string(),
                             onsucceed: Some("loop8".to_string()),
                             onfail: None,
-                            silent: true,
                         }],
                     },
                 ],

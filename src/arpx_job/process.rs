@@ -6,7 +6,6 @@ pub struct Process {
     pub name: String,
     pub onfail: Option<String>,
     pub onsucceed: Option<String>,
-    pub silent: bool,
 }
 
 pub fn concurrent_processes<'a>() -> impl Parser<'a, Vec<Process>> {
@@ -20,57 +19,35 @@ pub fn concurrent_processes<'a>() -> impl Parser<'a, Vec<Process>> {
 }
 
 pub fn single_process<'a>() -> impl Parser<'a, Vec<Process>> {
-    pair(process_without_log_monitors(), log_monitors())
-        .map(|(process_vec, log_monitors)| {
+    pair(process_without_log_monitors(), log_monitors()).map(|(process_vec, log_monitors)| {
         match process_vec.first() {
             Some(process) => vec![Process {
                 log_monitors,
                 name: process.name.clone(),
                 onfail: process.onfail.clone(),
                 onsucceed: process.onsucceed.clone(),
-                silent: process.silent,
             }],
             None => panic!(),
         }
     })
 }
 
-pub fn process_without_log_monitors<'a>() -> impl Parser<'a, Vec<Process>> {
-    whitespace_wrap(either(silent_process(), nonsilent_process()))
-}
-
 pub fn log_monitors<'a>() -> impl Parser<'a, Vec<String>> {
     n(whitespace_wrap(right(literal("@"), process_name)), 0..)
 }
 
-fn silent_process<'a>() -> impl Parser<'a, Vec<Process>> {
-    right(
-        whitespace_wrap(literal("(")),
-        left(nonsilent_process(), whitespace_wrap(literal(")"))),
-    )
-    .map(|process_vec| match process_vec.first() {
-        Some(process) => vec![Process {
-            log_monitors: Vec::new(),
-            name: process.name.clone(),
-            onfail: process.onfail.clone(),
-            onsucceed: process.onsucceed.clone(),
-            silent: true,
-        }],
-        None => panic!(),
-    })
-}
-
-fn nonsilent_process<'a>() -> impl Parser<'a, Vec<Process>> {
-    terminating_semicolon(pair(process_name, process_predicate())).map(
-        |(name, (onsucceed, onfail))| {
-            vec![Process {
-                log_monitors: Vec::new(),
-                name,
-                onfail,
-                onsucceed,
-                silent: false,
-            }]
-        },
+fn process_without_log_monitors<'a>() -> impl Parser<'a, Vec<Process>> {
+    whitespace_wrap(
+        terminating_semicolon(pair(process_name, process_predicate())).map(
+            |(name, (onsucceed, onfail))| {
+                vec![Process {
+                    log_monitors: Vec::new(),
+                    name,
+                    onfail,
+                    onsucceed,
+                }]
+            },
+        ),
     )
 }
 
@@ -125,23 +102,6 @@ mod tests {
             name: "loop1".to_string(),
             onsucceed: None,
             onfail: None,
-            silent: false,
-        }];
-
-        assert_eq!(single_process().parse(example)?, ("", expected));
-        Ok(())
-    }
-
-    #[test]
-    fn test_silent_process() -> Result<(), String> {
-        let example = "(loop1;)";
-
-        let expected = vec![Process {
-            log_monitors: Vec::new(),
-            name: "loop1".to_string(),
-            onsucceed: None,
-            onfail: None,
-            silent: true,
         }];
 
         assert_eq!(single_process().parse(example)?, ("", expected));
@@ -157,7 +117,6 @@ mod tests {
             name: "loop1".to_string(),
             onsucceed: Some("loop2".to_string()),
             onfail: None,
-            silent: false,
         }];
 
         assert_eq!(single_process().parse(example)?, ("", expected));
@@ -173,7 +132,6 @@ mod tests {
             name: "loop1".to_string(),
             onsucceed: None,
             onfail: Some("loop3".to_string()),
-            silent: false,
         }];
 
         assert_eq!(single_process().parse(example)?, ("", expected));
@@ -189,23 +147,6 @@ mod tests {
             name: "loop1".to_string(),
             onsucceed: Some("loop2".to_string()),
             onfail: Some("loop3".to_string()),
-            silent: false,
-        }];
-
-        assert_eq!(single_process().parse(example)?, ("", expected));
-        Ok(())
-    }
-
-    #[test]
-    fn test_silent_process_with_onsucceed_and_onfail() -> Result<(), String> {
-        let example = "(loop1 ? loop2 : loop3;)";
-
-        let expected = vec![Process {
-            log_monitors: Vec::new(),
-            name: "loop1".to_string(),
-            onsucceed: Some("loop2".to_string()),
-            onfail: Some("loop3".to_string()),
-            silent: true,
         }];
 
         assert_eq!(single_process().parse(example)?, ("", expected));
@@ -218,7 +159,7 @@ mod tests {
             [
                 loop1 ? loop2 : loop3;
                 loop2 ? loop3 : loop4;
-                (loop3 ? loop4 : loop5;)
+                loop3 ? loop4 : loop5;
             ]
         "#;
 
@@ -228,21 +169,18 @@ mod tests {
                 name: "loop1".to_string(),
                 onsucceed: Some("loop2".to_string()),
                 onfail: Some("loop3".to_string()),
-                silent: false,
             },
             Process {
                 log_monitors: Vec::new(),
                 name: "loop2".to_string(),
                 onsucceed: Some("loop3".to_string()),
                 onfail: Some("loop4".to_string()),
-                silent: false,
             },
             Process {
                 log_monitors: Vec::new(),
                 name: "loop3".to_string(),
                 onsucceed: Some("loop4".to_string()),
                 onfail: Some("loop5".to_string()),
-                silent: true,
             },
         ];
 
@@ -261,14 +199,12 @@ mod tests {
                 name: "loop1".to_string(),
                 onsucceed: Some("loop2".to_string()),
                 onfail: Some("loop3".to_string()),
-                silent: false,
             },
             Process {
                 log_monitors: Vec::new(),
                 name: "loop2".to_string(),
                 onsucceed: Some("loop3".to_string()),
                 onfail: None,
-                silent: false,
             },
         ];
 
@@ -286,23 +222,6 @@ mod tests {
             name: "loop1".to_string(),
             onsucceed: None,
             onfail: None,
-            silent: false,
-        }];
-
-        assert_eq!(single_process().parse(example)?, ("", expected));
-        Ok(())
-    }
-
-    #[test]
-    fn test_silent_process_with_log_monitors() -> Result<(), String> {
-        let example = "(loop1;) @foo @bar @baz";
-
-        let expected = vec![Process {
-            log_monitors: vec!["foo".to_string(), "bar".to_string(), "baz".to_string()],
-            name: "loop1".to_string(),
-            onsucceed: None,
-            onfail: None,
-            silent: true,
         }];
 
         assert_eq!(single_process().parse(example)?, ("", expected));
@@ -315,7 +234,7 @@ mod tests {
             [
                 loop1 ? loop2 : loop3; @foo @bar
                 loop2 ? loop3 : loop4;
-                (loop3 ? loop4 : loop5;) @baz
+                loop3 ? loop4 : loop5; @baz
             ]
         "#;
 
@@ -325,21 +244,18 @@ mod tests {
                 name: "loop1".to_string(),
                 onsucceed: Some("loop2".to_string()),
                 onfail: Some("loop3".to_string()),
-                silent: false,
             },
             Process {
                 log_monitors: Vec::new(),
                 name: "loop2".to_string(),
                 onsucceed: Some("loop3".to_string()),
                 onfail: Some("loop4".to_string()),
-                silent: false,
             },
             Process {
                 log_monitors: vec!["baz".to_string()],
                 name: "loop3".to_string(),
                 onsucceed: Some("loop4".to_string()),
                 onfail: Some("loop5".to_string()),
-                silent: true,
             },
         ];
 
